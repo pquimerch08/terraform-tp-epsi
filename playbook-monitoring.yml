@@ -1,5 +1,5 @@
 ---
-- name: Installation de Node Exporter
+- name: Installation de Nodes Exporter
   hosts: serveurs
   become: yes
   tasks:
