@@ -1,0 +1,53 @@
+---
+- name: Déploiement avec templates
+  hosts: all
+  become: yes
+  
+  vars:
+    app_name: "mywebapp"
+    web_port: 8080
+    server_name: "demo.local"
+  
+  tasks:
+    - name: Installer Nginx
+      apt:
+        name: nginx
+        state: present
+        update_cache: yes
+    
+    - name: Créer le répertoire web
+      file:
+        path: "/var/www/{{ app_name }}"
+        state: directory
+        mode: '0755'
+    
+    - name: Déployer la configuration Nginx depuis template
+      template:
+        src: templates/nginx.conf.j2
+        dest: "/etc/nginx/sites-available/{{ app_name }}.conf"
+      notify: Restart Nginx
+    
+    - name: Créer une page HTML
+      copy:
+        content: |
+          <!DOCTYPE html>
+          <html>
+          <head><title>{{ app_name }}</title></head>
+          <body>
+            <h1>Bienvenue sur {{ app_name }}</h1>
+            <p>Serveur: {{ ansible_hostname }}</p>
+            <p>Déployé le: {{ ansible_date_time.iso8601 }}</p>
+          </body>
+          </html>
+        dest: "/var/www/{{ app_name }}/index.html"
+    
+    - name: Afficher l'URL d'accès
+      debug:
+        msg: "Application accessible sur http://localhost:{{ web_port }}"
+  
+  handlers:
+    - name: Restart Nginx
+      service:
+        name: nginx
+        state: restarted
+

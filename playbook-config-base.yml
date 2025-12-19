@@ -1,0 +1,36 @@
+---
+- name: Configuration de base des serveurs Debian
+  hosts: serveurs
+  become: yes
+  tasks:
+    
+    - name: Mettre à jour le cache APT
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+    
+    - name: Installer les paquets essentiels
+      apt:
+        name:
+          - vim
+          - curl
+          - wget
+          - htop
+          - net-tools
+          - git
+        state: present
+    
+    - name: Créer un utilisateur applicatif
+      user:
+        name: appuser
+        shell: /bin/bash
+        create_home: yes
+        state: present
+    
+    - name: Configurer le timezone
+      timezone:
+        name: Europe/Paris
+    
+    - name: Afficher les informations système
+      debug:
+        msg: "Serveur {{ inventory_hostname }} configuré avec succès"

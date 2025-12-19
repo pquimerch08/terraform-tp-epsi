@@ -1,0 +1,27 @@
+services:
+  serveur1:
+    build: .
+    container_name: debian-serveur1
+    hostname: serveur1
+    ports:
+      - "2222:22"
+    networks:
+      ansible_network:
+        ipv4_address: 172.20.0.10
+
+  serveur2:
+    build: .
+    container_name: debian-serveur2
+    hostname: serveur2
+    ports:
+      - "2223:22"
+    networks:
+      ansible_network:
+        ipv4_address: 172.20.0.11
+
+networks:
+  ansible_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

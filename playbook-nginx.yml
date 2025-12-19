@@ -1,0 +1,67 @@
+---
+- name: Installation et configuration de Nginx
+  hosts: serveurs
+  become: yes
+  tasks:
+    
+    - name: Installer Nginx
+      apt:
+        name: nginx
+        state: present
+        update_cache: yes
+    
+    - name: Créer le répertoire web
+      file:
+        path: /var/www/html
+        state: directory
+        mode: '0755'
+    
+    - name: Créer une page d'accueil personnalisée
+      copy:
+        content: |
+          <!DOCTYPE html>
+          <html>
+          <head>
+              <title>{{ inventory_hostname }}</title>
+              <style>
+                  body {
+                      font-family: Arial, sans-serif;
+                      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                      color: white;
+                      display: flex;
+                      justify-content: center;
+                      align-items: center;
+                      height: 100vh;
+                      margin: 0;
+                  }
+                  .container {
+                      text-align: center;
+                      background: rgba(255,255,255,0.1);
+                      padding: 50px;
+                      border-radius: 20px;
+                      backdrop-filter: blur(10px);
+                  }
+                  h1 { font-size: 3em; margin: 0; }
+                  p { font-size: 1.5em; }
+              </style>
+          </head>
+          <body>
+              <div class="container">
+                  <h1>🚀 {{ inventory_hostname }}</h1>
+                  <p>Serveur configuré avec Ansible</p>
+                  <p>Date: {{ ansible_date_time.iso8601 }}</p>
+              </div>
+          </body>
+          </html>
+        dest: /var/www/html/index.html
+        mode: '0644'
+    
+    - name: Démarrer et activer Nginx
+      systemd:
+        name: nginx
+        state: started
+        enabled: yes
+    
+    - name: Afficher l'URL du serveur
+      debug:
+        msg: "Nginx installé sur {{ inventory_hostname }}"

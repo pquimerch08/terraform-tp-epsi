@@ -1,0 +1,17 @@
+FROM debian:12
+
+# Installer SSH et sudo
+RUN apt-get update && \
+    apt-get install -y openssh-server sudo python3 && \
+    mkdir /var/run/sshd
+
+# Configurer SSH pour autoriser root
+RUN echo 'root:password' | chpasswd && \
+    sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && \
+    sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config
+
+# Exposer le port SSH
+EXPOSE 22
+
+# Démarrer SSH
+CMD ["/usr/sbin/sshd", "-D"]

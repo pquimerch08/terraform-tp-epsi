@@ -1,0 +1,32 @@
+---
+- name: Utilisation de variables externes
+  hosts: all
+  become: yes
+  vars_files:
+    - vars.yml
+  
+  tasks:
+    - name: Afficher les variables chargées
+      debug:
+        msg: 
+          - "Port web: {{ web_server_port }}"
+          - "Base de données: {{ db_name }}"
+          - "Utilisateur DB: {{ db_user }}"
+          - "Répertoire backup: {{ backup_dir }}"
+    
+    - name: Créer le répertoire de backup
+      file:
+        path: "{{ backup_dir }}"
+        state: directory
+        mode: '0700'
+    
+    - name: Créer un fichier de log
+      copy:
+        content: |
+          [{{ ansible_date_time.iso8601 }}] Configuration déployée
+          Serveur: {{ inventory_hostname }}
+          Port: {{ web_server_port }}
+          DB: {{ db_name }}
+          Log Level: {{ log_level }}
+        dest: "{{ backup_dir }}/deployment.log"
+

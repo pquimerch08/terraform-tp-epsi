@@ -1,0 +1,13 @@
+# Copier ce fichier en terraform.tfvars et remplir avec vos vraies valeurs
+
+# Google Cloud
+gcp_project = "votre-projet-id"
+gcp_region  = "europe-west1"
+gcp_zone    = "europe-west1-b"
+
+# GitHub (utilisez des variables d'environnement plutôt)
+# github_token = "ghp_VOTRE_TOKEN_ICI"
+
+# VM Configuration
+vm_name         = "terraform-vm"
+machine_type    = "e2-micro"

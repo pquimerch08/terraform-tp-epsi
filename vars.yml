@@ -1,0 +1,7 @@
+---
+web_server_port: 8080
+db_name: "production_db"
+db_user: "dbadmin"
+backup_dir: "/var/backups/ansible"
+log_level: "INFO"
+

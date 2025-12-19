@@ -1,0 +1,62 @@
+---
+- name: Playbook avancé avec conditions et boucles
+  hosts: all
+  become: yes
+  
+  vars:
+    users:
+      - name: alice
+        shell: /bin/bash
+        groups: sudo
+      - name: bob
+        shell: /bin/sh
+        groups: users
+      - name: charlie
+        shell: /bin/bash
+        groups: users
+    
+    packages:
+      - vim
+      - git
+      - htop
+      - tree
+  
+  tasks:
+    - name: Afficher le système d'exploitation
+      debug:
+        msg: "Système: {{ ansible_distribution }} {{ ansible_distribution_version }}"
+    
+    - name: Installer packages (boucle)
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ packages }}"
+    
+    - name: Créer des utilisateurs (boucle)
+      user:
+        name: "{{ item.name }}"
+        shell: "{{ item.shell }}"
+        groups: "{{ item.groups }}"
+        state: present
+      loop: "{{ users }}"
+    
+    - name: Action seulement sur serveur1 (condition)
+      debug:
+        msg: "Ceci s'exécute uniquement sur serveur1"
+      when: inventory_hostname == "serveur1"
+    
+    - name: Vérifier si un fichier existe
+      stat:
+        path: /etc/nginx/nginx.conf
+      register: nginx_conf
+    
+    - name: Afficher si Nginx est installé
+      debug:
+        msg: "Nginx est {{ 'installé' if nginx_conf.stat.exists else 'NON installé' }}"
+    
+    - name: Créer un fichier seulement si condition
+      file:
+        path: /tmp/conditional-file.txt
+        state: touch
+      when: ansible_hostname == "serveur2"
+

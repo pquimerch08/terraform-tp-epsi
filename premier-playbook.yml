@@ -1,0 +1,47 @@
+---
+- name: Mon premier playbook Ansible
+  hosts: all
+  become: yes
+  
+  tasks:
+    - name: Afficher un message
+      debug:
+        msg: "Bonjour depuis {{ inventory_hostname }} !"
+    
+    - name: Mettre à jour le cache APT
+      apt:
+        update_cache: yes
+    
+    - name: Installer des packages essentiels
+      apt:
+        name:
+          - vim
+          - curl
+          - wget
+          - git
+          - htop
+        state: present
+    
+    - name: Créer un répertoire
+      file:
+        path: /opt/demo-ansible
+        state: directory
+        mode: '0755'
+    
+    - name: Créer un fichier avec du contenu
+      copy:
+        content: |
+          # Configuration générée par Ansible
+          Date: {{ ansible_date_time.iso8601 }}
+          Hostname: {{ ansible_hostname }}
+          OS: {{ ansible_distribution }} {{ ansible_distribution_version }}
+        dest: /opt/demo-ansible/info.txt
+    
+    - name: Afficher le contenu du fichier
+      command: cat /opt/demo-ansible/info.txt
+      register: file_content
+    
+    - name: Debug du contenu
+      debug:
+        var: file_content.stdout_lines
+

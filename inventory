@@ -1,0 +1,8 @@
+[serveurs]
+serveur1 ansible_host=localhost ansible_port=2222
+serveur2 ansible_host=localhost ansible_port=2223
+
+[serveurs:vars]
+ansible_user=root
+ansible_ssh_private_key_file=~/.ssh/id_rsa
+ansible_python_interpreter=/usr/bin/python3

@@ -1,0 +1,49 @@
+---
+- name: Playbook avec variables
+  hosts: all
+  become: yes
+  
+  vars:
+    app_name: "MonApplication"
+    app_version: "1.0.0"
+    app_user: "appuser"
+    packages_to_install:
+      - nginx
+      - python3-pip
+      - git
+  
+  tasks:
+    - name: Afficher les variables
+      debug:
+        msg: "Installation de {{ app_name }} version {{ app_version }}"
+    
+    - name: Créer l'utilisateur de l'application
+      user:
+        name: "{{ app_user }}"
+        state: present
+        shell: /bin/bash
+        create_home: yes
+    
+    - name: Installer les packages
+      apt:
+        name: "{{ packages_to_install }}"
+        state: present
+        update_cache: yes
+    
+    - name: Créer le répertoire de l'application
+      file:
+        path: "/opt/{{ app_name }}"
+        state: directory
+        owner: "{{ app_user }}"
+        mode: '0755'
+    
+    - name: Créer un fichier de configuration
+      copy:
+        content: |
+          APP_NAME={{ app_name }}
+          APP_VERSION={{ app_version }}
+          APP_USER={{ app_user }}
+        dest: "/opt/{{ app_name }}/config.env"
+        owner: "{{ app_user }}"
+
+

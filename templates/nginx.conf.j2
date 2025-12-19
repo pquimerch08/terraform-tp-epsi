@@ -1,0 +1,19 @@
+# Configuration Nginx générée par Ansible
+# Serveur: {{ ansible_hostname }}
+# Date: {{ ansible_date_time.iso8601 }}
+
+server {
+    listen {{ web_port | default(80) }};
+    server_name {{ server_name | default('localhost') }};
+    
+    root /var/www/{{ app_name }};
+    index index.html;
+    
+    location / {
+        try_files $uri $uri/ =404;
+    }
+    
+    # Logs
+    access_log /var/log/nginx/{{ app_name }}_access.log;
+    error_log /var/log/nginx/{{ app_name }}_error.log;
+}
