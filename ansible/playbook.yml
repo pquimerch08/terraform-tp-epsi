@@ -1,0 +1,16 @@
+---
+- name: Installation WordPress
+  hosts: webservers
+  become: yes
+
+  roles:
+    - apache
+    - wordpress
+
+- name: Installation MySQL
+  hosts: dbservers
+  become: yes
+
+  roles:
+    - mysql
+
